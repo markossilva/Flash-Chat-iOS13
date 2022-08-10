@@ -23,6 +23,8 @@ class ChatViewController: UIViewController {
         Message(sender: "rodrigo@gmail.com", body: "hieqweqweqweqeqweqweqweqweqweqewqweqweqweqeqeqw"),
     ]
     
+    var authManager = AuthManager() as AuthLogout
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -90,11 +92,13 @@ class ChatViewController: UIViewController {
     }
     
     @IBAction func logOutButtonPressed(_ sender: UIBarButtonItem) {
-        do {
-            try Auth.auth().signOut()
+        authManager.signOut { error in
+            if let e = error {
+                print("Error signing out", e)
+                return
+            }
+            
             navigationController?.popToRootViewController(animated: true)
-        } catch let signOutError as NSError {
-            print("Error signing out", signOutError)
         }
     }
 }

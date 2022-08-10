@@ -14,18 +14,26 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var emailTextfield: UITextField!
     @IBOutlet weak var passwordTextfield: UITextField!
     
+    var authManager = AuthManager() as AuthLogin
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        authManager.delegate = self
+    }
     
     @IBAction func loginPressed(_ sender: UIButton) {
         if let email = emailTextfield.text, let password = passwordTextfield.text {
-            Auth.auth().signIn(withEmail: email, password: password) { result, error in
-                if let e = error {
-                    print(e)
-                    return
-                }
-                
-                self.performSegue(withIdentifier: K.loginSegue, sender: self)
-            }
+            authManager.signIn(withEmail: email, password: password)
         }
     }
+}
+
+extension LoginViewController: AuthManagerDelegate {
+    func didFailWithError(error: Error) {
+        print(error)
+    }
     
+    func didSuccessRequest(authManager: AuthManager) {
+        self.performSegue(withIdentifier: K.loginSegue, sender: self)
+    }
 }
